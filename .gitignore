@@ -1,0 +1,4 @@
+.venv
+uv.lock
+.idea
+__pycache__
