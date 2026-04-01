@@ -1,12 +1,12 @@
 import uuid
 from datetime import datetime
-
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from models.user_model import Environment, Domain
 
 
 class UserCreate(BaseModel):
     login: EmailStr
-    password: str = Field(..., min_length=8, max_length=64)
+    password: str = Field(min_length=8, max_length=64)
     project_id: uuid.UUID
     env: Environment
     domain: Domain

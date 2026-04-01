@@ -1,16 +1,19 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 
-app = FastAPI()
+from controllers import user_controller
+from db import engine
+from models.user_model import Base
+from controllers.user_controller import router as user_controller
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+@asynccontextmanager
+async def lifespan(application: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    await engine.dispose()
 
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
-@app.get("/test")
-async def test():
-    return {"message": "TTTTTTTerminator"}
+app = FastAPI(lifespan=lifespan)
+app.include_router(user_controller, prefix="/api/v1")
